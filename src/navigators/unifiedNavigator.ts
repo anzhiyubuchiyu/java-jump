@@ -1,16 +1,26 @@
 /**
  * 统一导航服务
  *
+ * 融合 Java 接口实现跳转与 MyBatis Mapper XML 导航的统一入口
  * 统一处理所有跳转场景：
- * - a1: 接口类 ↔ 实现类
- * - a2: 接口方法 ↔ 实现方法
- * - b1: Mapper类 ↔ XML文件
- * - b2: Mapper方法 ↔ XML SQL
+ * - a1: 接口类 → 实现类
+ * - a2: 实现类 → 接口
+ * - a3: 接口方法 → 实现方法
+ * - a4: 实现方法 → 接口定义
+ * - b1: Mapper类 → XML文件
+ * - b2: XML文件 → Mapper类
+ * - b3: Mapper方法 → SQL标签
+ * - b4: SQL标签 → Mapper方法
  *
- * 核心原则：
- * 1. 统一的路径匹配算法
- * 2. 统一的候选选择逻辑
- * 3. 统一的错误处理
+ * 核心设计原则：
+ * 1. 统一的路径匹配算法（PathMatcher.calculateSimilarity）
+ * 2. 统一的候选评分与选择逻辑
+ * 3. 统一的错误处理和日志记录
+ * 4. 内联选择逻辑（移除 SmartSelector 依赖）
+ * 5. 支持 @Primary 注解优先选择
+ *
+ * 架构演进：
+ * - 2026-03-06: 移除 SmartSelector 和 BaseNavigator 依赖，内联选择逻辑
  */
 
 import * as vscode from 'vscode';
