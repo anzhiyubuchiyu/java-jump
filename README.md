@@ -1,6 +1,113 @@
 # Java Navigator Plus
 
-VS Code插件，融合Java接口实现跳转和MyBatis Mapper XML导航功能。
+[中文](#中文说明) | [English](#english-description)
+
+---
+
+# English Description
+
+A unified VS Code extension that combines Java interface-to-implementation navigation and MyBatis Mapper XML navigation.
+
+## Features
+
+### 1. Java Interface Navigation
+
+- **Interface → Implementation**: Click "Jump to Implementation" on interface classes or methods to quickly find all implementations
+- **Implementation → Interface**: Click "Jump to Interface" on implementation methods to navigate to interface definitions
+- **Multiple Implementations Selection**: Provides a selection list when multiple implementations exist
+
+### 2. MyBatis Mapper XML Navigation
+
+- **Mapper → XML**: Click "Jump to XML" on Mapper interfaces to navigate directly to corresponding XML files
+- **XML → Mapper**: Click "Jump to Mapper" on XML files to return to Java interfaces
+- **Method-level Navigation**: Supports jumping from Mapper methods to specific SQL definitions
+- **Smart XML Matching**: Intelligently sorts XML files with the same name, prioritizing files from the same module
+
+### 3. CodeLens Integration
+
+Jump buttons displayed directly in the code editor:
+- Regular interfaces: Show "Jump to Implementation"
+- Mapper interfaces: Show "Jump to XML"
+- Implementation classes: Show "Jump to Interface"
+
+## Keyboard Shortcuts
+
+- `Ctrl+Alt+B`: Jump to Implementation
+- `Ctrl+Alt+M`: Jump to XML (Java files)
+- `Ctrl+Alt+U`: Jump to Mapper (XML files)
+
+## Configuration
+
+Configure in `settings.json`:
+
+```json
+{
+  "javaNavigator.enableCodeLens": true,
+  "javaNavigator.enableInterfaceNavigation": true,
+  "javaNavigator.enableMyBatisNavigation": true,
+  "javaNavigator.excludeFolders": ["node_modules", ".git", "target", "build", "out", "dist"],
+  "javaNavigator.mapperPatterns": [
+    { "searchPaths": ["src/main/resources/mapper", "src/main/resources/mappers"] }
+  ]
+}
+```
+
+## Usage Examples
+
+### Example 1: Jump from Interface to Implementation
+
+```java
+// UserService.java - Click "Jump to Implementation"
+public interface UserService {
+    User getUserById(Long id);  // Jumps to UserServiceImpl.getUserById()
+}
+```
+
+### Example 2: Jump from Mapper to XML
+
+```java
+// UserMapper.java - Click "Jump to XML"
+@Mapper
+public interface UserMapper {
+    User selectById(Long id);  // Jumps to UserMapper.xml <select id="selectById">
+}
+```
+
+### Example 3: Multi-module Projects
+
+When multiple modules contain XML files with the same name (e.g., `module-a/UserMapper.xml` and `module-b/UserMapper.xml`),
+the extension intelligently sorts and prioritizes XML files from the same module as the current Java file.
+
+## Installation
+
+### Install from VSIX
+
+1. Download the `.vsix` file
+2. Press `Ctrl+Shift+P` in VS Code, type "install from vsix"
+3. Select the downloaded file
+
+### Install from Marketplace
+
+Search for "Java Navigator Plus" in the VS Code Extensions marketplace and install.
+
+## Requirements
+
+- VS Code 1.74.0 or higher
+- Java projects (Maven/Gradle supported)
+
+## Technical Implementation
+
+- Built on VS Code Extension API
+- Developed with TypeScript
+- Combines features from two open-source extensions:
+  - Java Interface Implementation Jumper
+  - vscode-mybatis-helper
+
+---
+
+# 中文说明
+
+融合Java接口实现跳转和MyBatis Mapper XML导航功能的统一VS Code插件。
 
 ## 功能特性
 
@@ -80,13 +187,13 @@ public interface UserMapper {
 2. 在VS Code中按 `Ctrl+Shift+P`，输入 "install from vsix"
 3. 选择下载的文件
 
-### 从Marketplace安装（待发布）
+### 从Marketplace安装
 
-搜索 "Java Navigator Plus" 并安装。
+在 VS Code 扩展商店搜索 "Java Navigator Plus" 并安装。
 
 ## 要求
 
-- VS Code 1.60.0 或更高版本
+- VS Code 1.74.0 或更高版本
 - Java 项目（支持Maven/Gradle）
 
 ## 技术实现
@@ -97,6 +204,6 @@ public interface UserMapper {
   - Java Interface Implementation Jumper
   - vscode-mybatis-helper
 
-## 许可证
+## License
 
 MIT License
