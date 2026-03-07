@@ -17,7 +17,14 @@
  * - impl目录模式：+30分
  * - 包路径匹配：+15分/层
  * - 目录结构匹配：+5分/层
+ * - 继承关系匹配（直接实现）：+150分
+ * - 继承关系匹配（直接继承）：+100分
+ * - 同包路径：+30分
  */
+
+import * as fs from 'fs';
+import { JavaParser } from './javaParser';
+import { Logger } from './logger';
 
 export class PathMatcher {
   /**
@@ -115,6 +122,10 @@ export class PathMatcher {
         break;
       }
     }
+
+    // ===== 7. 继承关系匹配（Java文件之间） =====
+    const inheritanceScore = this.calculateInheritanceScore(sourcePath, targetPath);
+    score += inheritanceScore;
 
     return score;
   }
@@ -256,5 +267,85 @@ export class PathMatcher {
     }
 
     return '';
+  }
+
+  /**
+   * 计算继承关系匹配分数
+   * 通过解析Java文件内容判断实际的继承/实现关系
+   *
+   * @param sourcePath 源文件路径
+   * @param targetPath 目标文件路径
+   * @returns 继承关系分数（0-180）
+   */
+  static calculateInheritanceScore(sourcePath: string, targetPath: string): number {
+    // 只有Java文件之间才计算继承关系
+    if (!sourcePath.endsWith('.java') || !targetPath.endsWith('.java')) {
+      return 0;
+    }
+
+    try {
+      // 同步读取文件内容
+      const content1 = fs.readFileSync(sourcePath, 'utf-8');
+      const content2 = fs.readFileSync(targetPath, 'utf-8');
+
+      // 使用JavaParser解析两个文件
+      const parseResult1 = JavaParser.parseContent(content1, sourcePath);
+      const parseResult2 = JavaParser.parseContent(content2, targetPath);
+
+      let score = 0;
+
+      // 场景1: source是接口，target是实现类
+      if (parseResult1.isInterface && !parseResult2.isInterface) {
+        // 检查target是否直接实现了source
+        if (parseResult2.interfaces.includes(parseResult1.className)) {
+          score += 150; // 直接实现关系，最高权重
+        }
+        // 检查是否通过全限定名匹配
+        else if (parseResult2.interfaces.some(i =>
+          i === parseResult1.className ||
+          i.endsWith('.' + parseResult1.className)
+        )) {
+          score += 120;
+        }
+      }
+
+      // 场景2: source是实现类，target是接口
+      if (!parseResult1.isInterface && parseResult2.isInterface) {
+        // 检查source是否实现了target
+        if (parseResult1.interfaces.includes(parseResult2.className)) {
+          score += 150; // 直接实现关系
+        }
+        // 检查是否通过全限定名匹配
+        else if (parseResult1.interfaces.some(i =>
+          i === parseResult2.className ||
+          i.endsWith('.' + parseResult2.className)
+        )) {
+          score += 120;
+        }
+      }
+
+      // 场景3: 继承关系（source是父类，target是子类）
+      if (parseResult2.superClass === parseResult1.className) {
+        score += 100; // 直接继承关系
+      }
+
+      // 场景4: 同一包路径加分
+      if (parseResult1.packageName && parseResult2.packageName) {
+        if (parseResult1.packageName === parseResult2.packageName) {
+          score += 30; // 同一包
+        } else if (
+          parseResult1.packageName.startsWith(parseResult2.packageName + '.') ||
+          parseResult2.packageName.startsWith(parseResult1.packageName + '.')
+        ) {
+          score += 15; // 父子包关系
+        }
+      }
+
+      return score;
+    } catch (error) {
+      // 解析失败时返回0，不影响其他匹配
+      Logger.getInstance().debug(`[PathMatcher] 计算继承关系分数失败: ${sourcePath} <-> ${targetPath}`, error);
+      return 0;
+    }
   }
 }
