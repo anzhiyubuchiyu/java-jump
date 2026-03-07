@@ -8,18 +8,18 @@
  * - Mapper模式：UserMapper.java + UserMapper.xml
  *
  * 分数计算规则（优化后）：
- * - 文件名完全匹配：+150分
- * - 命名对匹配（Service/Impl等）：+100分
- * - 基础名称匹配：+50分
- * - 同模块且文件名相关：+100分
- * - 同模块但不相关：+30分
- * - 文件类型匹配（Java↔Java/XML）：+20分
- * - impl目录模式：+30分
- * - 包路径匹配：+15分/层
- * - 目录结构匹配：+5分/层
- * - 继承关系匹配（直接实现）：+150分
- * - 继承关系匹配（直接继承）：+100分
- * - 同包路径：+30分
+ * - 文件名完全匹配：150分
+ * - 命名对匹配（Service/Impl等）：100分
+ * - 基础名称匹配：50分
+ * - 同模块且文件名相关：100分
+ * - 同模块但不相关：30分
+ * - 文件类型匹配（Java↔Java/XML）：20分
+ * - impl目录模式：30分
+ * - 包路径匹配：15分/层
+ * - 目录结构匹配：5分/层
+ * - 继承关系匹配（直接实现）：150分
+ * - 继承关系匹配（直接继承）：100分
+ * - 同包路径：30分
  */
 
 import * as fs from 'fs';
@@ -63,15 +63,15 @@ export class PathMatcher {
 
     // ===== 2. 核心命名模式匹配 =====
 
-    // 2.1 文件名完全匹配（如 UserMapper.java <-> UserMapper.xml）+150分
+    // 2.1 文件名完全匹配（如 UserMapper.java <-> UserMapper.xml）150分
     if (fileName1 === fileName2) {
       score += 150;
     }
-    // 2.2 Service/Impl命名模式匹配（如 BookService <-> BookServiceImpl）+100分
+    // 2.2 Service/Impl命名模式匹配（如 BookService <-> BookServiceImpl）100分
     else if (this.isNamingPair(fileName1, fileName2)) {
       score += 100;
     }
-    // 2.3 基础名称匹配（如 BookService <-> BookServiceImpl 去掉Impl后匹配）+50分
+    // 2.3 基础名称匹配（如 BookService <-> BookServiceImpl 去掉Impl后匹配）50分
     else if (this.getBaseName(fileName1) === this.getBaseName(fileName2)) {
       score += 50;
     }
@@ -344,7 +344,7 @@ export class PathMatcher {
       return score;
     } catch (error) {
       // 解析失败时返回0，不影响其他匹配
-      Logger.getInstance().debug(`[PathMatcher] 计算继承关系分数失败: ${sourcePath} <-> ${targetPath}`, error);
+      Logger.getInstance().debug('[PathMatcher] 计算继承关系分数失败: ' + sourcePath + ' <-> ' + targetPath, error);
       return 0;
     }
   }
