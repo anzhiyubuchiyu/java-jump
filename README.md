@@ -1,4 +1,4 @@
-# Java Navigator Plus
+# Java Jump
 
 [中文](#中文说明) | [English](#english-description)
 
@@ -88,7 +88,7 @@ the extension intelligently sorts and prioritizes XML files from the same module
 
 ### Install from Marketplace
 
-Search for "Java Navigator Plus" in the VS Code Extensions marketplace and install.
+Search for "Java Jump" in the VS Code Extensions marketplace and install.
 
 ## Requirements
 
@@ -189,7 +189,7 @@ public interface UserMapper {
 
 ### 从Marketplace安装
 
-在 VS Code 扩展商店搜索 "Java Navigator Plus" 并安装。
+在 VS Code 扩展商店搜索 "Java Jump" 并安装。
 
 ## 要求
 
