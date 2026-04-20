@@ -39,7 +39,10 @@ const DEBOUNCE_DELAY = 300;
  */
 export async function activate(context: vscode.ExtensionContext) {
   logger = Logger.getInstance();
+  logger.initializeFromConfig();
   logger.info('Java Jump 扩展已激活');
+
+  context.subscriptions.push(logger.registerConfigListener());
 
   // 检查 Red Hat Java 扩展是否可用
   const redHatJavaExtension = vscode.extensions.getExtension('redhat.java');
@@ -325,6 +328,15 @@ function startFileWatching(context: vscode.ExtensionContext) {
  */
 async function initializeProjectScan() {
   try {
+    const config = vscode.workspace.getConfiguration('javaNavigator');
+    const cacheEnabled = config.get<boolean>('cacheEnabled', true);
+
+    if (!cacheEnabled) {
+      logger.info('索引缓存已禁用，跳过初始化预扫描');
+      codeLensProvider?.refresh();
+      return;
+    }
+
     const excludePattern = '**/{node_modules,.git,target,build,out,dist}/**';
     const [javaFiles, xmlFiles] = await Promise.all([
       vscode.workspace.findFiles('**/*.java', excludePattern, 500),

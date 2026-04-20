@@ -32,6 +32,12 @@ export class Logger {
     this.logLevel = level;
   }
 
+  initializeFromConfig(): void {
+    const config = vscode.workspace.getConfiguration('javaNavigator');
+    const level = config.get<string>('logLevel', 'info');
+    this.logLevel = Logger.parseLogLevel(level);
+  }
+
   private log(level: LogLevel, message: string, ...args: any[]): void {
     if (level > this.logLevel) return;
 
@@ -69,8 +75,31 @@ export class Logger {
       if (e.affectsConfiguration('javaNavigator.logLevel')) {
         const config = vscode.workspace.getConfiguration('javaNavigator');
         const level = config.get<string>('logLevel', 'info');
-        this.logLevel = LogLevel[level as keyof typeof LogLevel] ?? LogLevel.Info;
+        this.logLevel = Logger.parseLogLevel(level);
       }
     });
+  }
+
+  private static parseLogLevel(level: string | undefined): LogLevel {
+    if (!level) {
+      return LogLevel.Info;
+    }
+
+    const normalized = level.trim().toLowerCase();
+
+    switch (normalized) {
+      case 'none':
+        return LogLevel.None;
+      case 'error':
+        return LogLevel.Error;
+      case 'warning':
+        return LogLevel.Warning;
+      case 'info':
+        return LogLevel.Info;
+      case 'debug':
+        return LogLevel.Debug;
+      default:
+        return LogLevel.Info;
+    }
   }
 }

@@ -29,9 +29,18 @@ export class IndexCacheManager {
     return IndexCacheManager.instance;
   }
 
+  private isCacheEnabled(): boolean {
+    const config = vscode.workspace.getConfiguration('javaNavigator');
+    return config.get<boolean>('cacheEnabled', true);
+  }
+
   // ========== Mapper映射缓存 ==========
 
   setMapping(mapping: MapperMapping): void {
+    if (!this.isCacheEnabled()) {
+      return;
+    }
+
     this.javaToMapping.set(mapping.javaPath, mapping);
     if (mapping.xmlPath) {
       this.xmlToMapping.set(mapping.xmlPath, mapping);
@@ -41,18 +50,34 @@ export class IndexCacheManager {
   }
 
   getByJavaPath(javaPath: string): MapperMapping | undefined {
+    if (!this.isCacheEnabled()) {
+      return undefined;
+    }
+
     return this.javaToMapping.get(javaPath);
   }
 
   getByXmlPath(xmlPath: string): MapperMapping | undefined {
+    if (!this.isCacheEnabled()) {
+      return undefined;
+    }
+
     return this.xmlToMapping.get(xmlPath);
   }
 
   getByNamespace(namespace: string): MapperMapping | undefined {
+    if (!this.isCacheEnabled()) {
+      return undefined;
+    }
+
     return this.namespaceToMapping.get(namespace);
   }
 
   getByClassName(className: string): MapperMapping | undefined {
+    if (!this.isCacheEnabled()) {
+      return undefined;
+    }
+
     return this.classNameToMapping.get(className);
   }
 
@@ -69,6 +94,10 @@ export class IndexCacheManager {
   }
 
   updateXmlPath(javaPath: string, xmlPath: string): void {
+    if (!this.isCacheEnabled()) {
+      return;
+    }
+
     const mapping = this.javaToMapping.get(javaPath);
     if (mapping) {
       mapping.xmlPath = xmlPath;
@@ -79,26 +108,46 @@ export class IndexCacheManager {
   // ========== 接口实现缓存 ==========
 
   setInterfaceImplementations(interfaceName: string, implementations: string[]): void {
+    if (!this.isCacheEnabled()) {
+      return;
+    }
+
     this.interfaceImplCache.set(interfaceName, implementations);
   }
 
   getInterfaceImplementations(interfaceName: string): string[] | undefined {
+    if (!this.isCacheEnabled()) {
+      return undefined;
+    }
+
     return this.interfaceImplCache.get(interfaceName);
   }
 
   // ========== 接口文件缓存 ==========
 
   setInterfaceFiles(interfaceName: string, files: string[]): void {
+    if (!this.isCacheEnabled()) {
+      return;
+    }
+
     this.interfaceFilesCache.set(interfaceName, files);
   }
 
   getInterfaceFiles(interfaceName: string): string[] | undefined {
+    if (!this.isCacheEnabled()) {
+      return undefined;
+    }
+
     return this.interfaceFilesCache.get(interfaceName);
   }
 
   // ========== 缓存失效 ==========
 
   invalidateForFile(filePath: string): void {
+    if (!this.isCacheEnabled()) {
+      return;
+    }
+
     const baseName = filePath.split(/[\\/]/).pop()?.replace('.java', '');
     if (baseName) {
       this.interfaceImplCache.deleteWhere(k => k === baseName || k.startsWith('abstractImpl:'));
@@ -127,6 +176,7 @@ export class IndexCacheManager {
 
   getDiagnostics(): object {
     return {
+      cacheEnabled: this.isCacheEnabled(),
       javaToMapping: this.javaToMapping.size,
       xmlToMapping: this.xmlToMapping.size,
       namespaceToMapping: this.namespaceToMapping.size,
