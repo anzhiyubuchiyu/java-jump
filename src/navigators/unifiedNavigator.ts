@@ -662,7 +662,7 @@ export class UnifiedNavigator {
    * 转义正则特殊字符
    */
   private escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return str.replace(new RegExp('[\\\\^$.*+?()[\\]{}|]', 'g'), '\\$&');
   }
 
   // === 辅助方法 ===

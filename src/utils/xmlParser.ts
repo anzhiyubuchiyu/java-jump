@@ -51,7 +51,7 @@ export class XmlParser {
     for (const type of sqlTypes) {
       // 使用更灵活的正则，支持多行标签
       // 匹配 <select 开头，然后是任意字符（包括换行），直到找到 id="xxx" 或 id='xxx'
-      const regex = new RegExp(`<${type}\\b([^>]|[>](?![\\s\\S]*?id\s*=))*?(id\\s*=\\s*["']([^"']+)["'])`, 'gi');
+      const regex = new RegExp(`<${type}\\b([^>]|[>](?![\\s\\S]*?id\\s*=))*?(id\\s*=\\s*["']([^"']+)["'])`, 'gi');
       let match: RegExpExecArray | null;
 
       while ((match = regex.exec(content)) !== null) {

@@ -192,7 +192,7 @@ export class MyBatisNavigator {
    * 通过namespace查找Java文件
    */
   async findJavaByNamespace(namespace: string, xmlPath?: string): Promise<MapperMapping | null> {
-    let mapping = this.cache.getByClassName(namespace);
+    const mapping = this.cache.getByClassName(namespace);
     if (mapping) return mapping;
 
     const simpleClassName = namespace.substring(namespace.lastIndexOf('.') + 1);

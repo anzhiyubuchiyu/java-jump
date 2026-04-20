@@ -33,7 +33,7 @@ export interface JavaMethodInfo {
 export class JavaLanguageService {
   private static instance: JavaLanguageService;
   private logger: Logger;
-  private isJavaExtensionAvailable: boolean = false;
+  private isJavaExtensionAvailable = false;
 
   private constructor() {
     this.logger = Logger.getInstance();
