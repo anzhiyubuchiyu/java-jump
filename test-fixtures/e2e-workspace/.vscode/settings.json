@@ -1,0 +1,6 @@
+{
+  "javaNavigator.useJavaLanguageServer": false,
+  "javaNavigator.logLevel": "none",
+  "javaNavigator.enableCodeLens": true,
+  "javaNavigator.cacheEnabled": true
+}

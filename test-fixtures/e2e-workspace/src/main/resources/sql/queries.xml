@@ -1,0 +1,5 @@
+<mapper namespace="com.example.data.StudentGateway">
+    <select id="findStudent" resultType="com.example.data.Student">
+        select * from student where id = #{id}
+    </select>
+</mapper>

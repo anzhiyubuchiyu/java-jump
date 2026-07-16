@@ -1,0 +1,233 @@
+{
+  "name": "java-jump",
+  "displayName": "Java Jump",
+  "description": "融合Java接口实现跳转与MyBatis XML命名空间导航的统一Java导航插件",
+  "version": "1.0.8",
+  "publisher": "anzhiyubuchiyu",
+  "icon": "icon.jpg",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anzhiyubuchiyu/java-jump"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Debuggers",
+    "Other"
+  ],
+  "keywords": [
+    "java",
+    "mybatis",
+    "mapper",
+    "navigation",
+    "interface",
+    "implementation"
+  ],
+  "activationEvents": [
+    "onLanguage:java",
+    "onLanguage:xml",
+    "workspaceContains:**/*.java",
+    "workspaceContains:**/*.xml"
+  ],
+  "extensionPack": [
+    "redhat.java"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "javaNavigator.jumpToXml",
+        "title": "跳转到XML",
+        "category": "Java Navigator"
+      },
+      {
+        "command": "javaNavigator.jumpToMapper",
+        "title": "跳转到Mapper",
+        "category": "Java Navigator"
+      },
+      {
+        "command": "javaNavigator.context.jumpToXml",
+        "title": "跳转到XML",
+        "category": "Java Navigator"
+      },
+      {
+        "command": "javaNavigator.context.jumpToMapper",
+        "title": "跳转到Mapper",
+        "category": "Java Navigator"
+      },
+      {
+        "command": "javaNavigator.showNavigationGraph",
+        "title": "显示导航图谱",
+        "category": "Java Navigator"
+      },
+      {
+        "command": "javaNavigator.refreshIndex",
+        "title": "刷新索引",
+        "category": "Java Navigator"
+      },
+      {
+        "command": "javaNavigator.diagnose",
+        "title": "诊断",
+        "category": "Java Navigator"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "javaNavigator.context.jumpToXml",
+          "when": "editorTextFocus && editorLangId == java && config.javaNavigator.enableMyBatisNavigation",
+          "group": "navigation@2"
+        },
+        {
+          "command": "javaNavigator.context.jumpToMapper",
+          "when": "editorTextFocus && editorLangId == xml && config.javaNavigator.enableMyBatisNavigation",
+          "group": "navigation@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "javaNavigator.context.jumpToXml",
+          "when": "false"
+        },
+        {
+          "command": "javaNavigator.context.jumpToMapper",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Java Jump",
+      "properties": {
+        "javaNavigator.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用CodeLens内联按钮"
+        },
+        "javaNavigator.enableInterfaceNavigation": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用接口实现类CodeLens导航"
+        },
+        "javaNavigator.enableMyBatisNavigation": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用MyBatis Mapper导航"
+        },
+        "javaNavigator.mapperPatterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "searchPaths"
+            ],
+            "properties": {
+              "searchPaths": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": [
+            {
+              "searchPaths": [
+                "src/main/resources/mapper",
+                "src/main/resources/mappers",
+                "src/main/resources/xml"
+              ]
+            }
+          ],
+          "description": "XML搜索路径提示（导航仍按namespace与Java FQN精确匹配）"
+        },
+        "javaNavigator.excludeFolders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "node_modules",
+            ".git",
+            ".svn",
+            ".hg",
+            "target",
+            "build",
+            "out",
+            "dist",
+            ".idea",
+            ".vscode",
+            ".settings",
+            "bin",
+            "obj",
+            "coverage",
+            ".nyc_output",
+            ".gradle",
+            "gradle",
+            ".mvn",
+            "mvnw",
+            "mvnw.cmd",
+            "gradlew",
+            "gradlew.bat"
+          ],
+          "description": "扫描时排除的文件夹"
+        },
+        "javaNavigator.cacheEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用索引缓存"
+        },
+        "javaNavigator.useJavaLanguageServer": {
+          "type": "boolean",
+          "default": true,
+          "description": "优先使用Java语言服务(Red Hat Java扩展)"
+        },
+        "javaNavigator.logLevel": {
+          "type": "string",
+          "default": "info",
+          "enum": [
+            "none",
+            "error",
+            "warning",
+            "info",
+            "debug"
+          ],
+          "description": "日志级别"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "clean:out": "node ./scripts/clean-output.js",
+    "compile": "npm run clean:out && tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "precoverage": "npm run compile && npm run lint",
+    "coverage": "npm run coverage:core && npm run coverage:branches && npm run coverage:integration",
+    "coverage:core": "c8 --clean --temp-directory=node_modules/.cache/java-jump-coverage-core --reporter=text --check-coverage --lines 80 --functions 80 --statements 80 --branches 0 --all --include=out/cache/indexCache.js --include=out/cache/typeGraph.js --include=out/utils/javaParser.js --include=out/utils/xmlParser.js --include=out/navigators/javaMethodResolver.js --include=out/navigators/unifiedNavigator.js node ./out/test/runTest.js",
+    "coverage:branches": "c8 --clean --temp-directory=node_modules/.cache/java-jump-coverage-branches --reporter=text-summary --check-coverage --lines 80 --functions 80 --statements 80 --branches 80 --all --include=out/cache/indexCache.js --include=out/cache/typeGraph.js --include=out/utils/javaParser.js --include=out/utils/xmlParser.js --include=out/navigators/javaMethodResolver.js node ./out/test/runTest.js",
+    "coverage:integration": "c8 --clean --temp-directory=node_modules/.cache/java-jump-coverage-integration --reporter=text-summary --check-coverage --lines 50 --functions 60 --statements 50 --branches 40 --all --include=out/providers/unifiedCodeLensProvider.js --include=out/navigators/myBatisNavigator.js --include=out/navigators/myBatisNavigationController.js --include=out/utils/navigationDiagnostics.js node ./out/test/runTest.js",
+    "test:e2e": "npm run compile && node ./out/test/e2e/runE2E.js",
+    "audit": "npm audit --registry=https://registry.npmjs.org",
+    "package:check": "npm run compile && node ./scripts/check-package.js",
+    "package:vsix": "node ./scripts/clean-artifacts.js && npm run compile && vsce package",
+    "package:artifact": "node ./scripts/check-vsix.js",
+    "verify": "npm test && npm run coverage && npm run test:e2e && npm run audit && npm run package:check",
+    "release:verify": "npm run verify && npm run package:vsix && npm run package:artifact"
+  },
+  "devDependencies": {
+    "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.2",
+    "c8": "^8.0.1",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4"
+  }
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper namespace="com.example.mapper.UserMapper">
+    <select id="findById" resultType="java.lang.String">
+        select name from users where id = #{id}
+    </select>
+</mapper>

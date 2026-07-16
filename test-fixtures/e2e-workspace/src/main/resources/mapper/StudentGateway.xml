@@ -1,0 +1,5 @@
+<mapper namespace="com.example.data.StudentGateway">
+    <select id="otherQuery" resultType="com.example.data.Student">
+        select * from student
+    </select>
+</mapper>

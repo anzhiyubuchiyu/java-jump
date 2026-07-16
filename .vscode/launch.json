@@ -1,0 +1,13 @@
+{
+    "configurations": [
+    {
+        "args": [
+            "--extensionDevelopmentPath=${workspaceFolder}"
+        ],
+        "name": "Launch Extension",
+        "preLaunchTask": "npm: compile",
+        "request": "launch",
+        "type": "extensionHost"
+    }
+    ]
+}

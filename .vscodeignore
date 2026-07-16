@@ -1,0 +1,16 @@
+.vscode/**
+.vscode-test/**
+.claude/**
+.gitnexus/**
+src/**
+scripts/**
+test-fixtures/**
+out/test/**
+node_modules/**
+.eslintrc.json
+.gitignore
+AGENTS.md
+CLAUDE.md
+package-lock.json
+tsconfig.json
+**/*.map
